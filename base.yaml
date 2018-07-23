@@ -4,7 +4,7 @@
   tasks:
     # Make sure you update this keypair!
   - name: Copy SSH keys
-    copy: src=~/.ssh/your-key-pair.pem dest=/root/.ssh/id_rsa owner=root group=root mode=0600
+    copy: src=~/.ssh/your-super-secret-key.pem dest=/root/.ssh/id_rsa owner=root group=root mode=0600
   - name: Copy TMux configuration
     copy: src=~/.tmux.conf dest=/root/.tmux.conf
   - name: Install packages
