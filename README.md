@@ -48,7 +48,8 @@ $ ansible-playbook hdp.yml -f 6
 ```
 
 Finally, take the path to your blueprint (cluster.json and blueprint.json files), and have Ambari install that blueprint.
-Make sure your cluster.json is updated for the right hostnames! (blueprints not included because reasons)
+Make sure your cluster.json is updated for the right hostnames! (blueprints not included because reasons). This script
+expects that the admin user's password for Ambari is still 'admin'.
 ```
 $ ./load-blueprint.sh ~/.ssh/your-super-secret-key.pem ~/blueprints/hdp3.0.0/6-node <ambari-server>
 ```
