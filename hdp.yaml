@@ -1,0 +1,49 @@
+---
+- hosts: hdp
+  remote_user: root
+  vars:
+    ambari_server: "{{ hostvars[groups['ambari-server'][0]]['ansible_fqdn'] }}"
+  tasks:
+    - name: Fetch Ambari Yum repository
+      get_url: 
+        url: http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.7.0.0/ambari.repo
+        dest: /etc/yum.repos.d/ambari.repo
+
+    - name: Install Ambari Agents
+      yum: name=ambari-agent state=latest
+    - name: Update ambari-agent.ini to point to ambari-server
+      replace:
+        path: /etc/ambari-agent/conf/ambari-agent.ini
+        regexp: '^hostname=(localhost)$'
+        replace: 'hostname={{ ambari_server }}'
+        backup: yes
+
+    - name: Check if Ambari-Agent is running
+      command: ambari-agent status
+      register: ambari_agent
+      ignore_errors: True
+    - name: Start ambari-agents
+      command: ambari-agent start
+      when: ambari_agent is failed
+
+- hosts: ambari-server
+  remote_user: root
+  tasks:
+    - name: Install Ambari-Server
+      yum: name=ambari-server state=latest
+
+    - name: Check if Ambari-Server is set up already
+      command: fgrep -q jdbc.user.name /etc/ambari-server/conf/ambari.properties
+      register: ambari_server
+      ignore_errors: True
+    - name: Setup Ambari-Server
+      command: ambari-server setup -s
+      when: ambari_server is failed
+
+    - name: Is Ambari-Server Running?
+      command: ambari-server status
+      register: ambari_server_running
+      ignore_errors: True
+    - name: Start Ambari-Server
+      command: ambari-server start
+      when: ambari_server_running is failed

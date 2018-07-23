@@ -1,0 +1,18 @@
+---
+- hosts: hdp
+  remote_user: root
+  tasks:
+    # Make sure you update this keypair!
+  - name: Copy SSH keys
+    copy: src=~/.ssh/your-key-pair.pem dest=/root/.ssh/id_rsa owner=root group=root mode=0600
+  - name: Copy TMux configuration
+    copy: src=~/.tmux.conf dest=/root/.tmux.conf
+  - name: Install packages
+    block:
+      - yum: name={{item}} state=latest
+        with_items:
+          - git
+          - htop
+          - tmux
+          - vim
+
