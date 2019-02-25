@@ -1,4 +1,7 @@
 ---
+# Hack to make sure we can find ambari-server, even if the ambari-server is not a part of the hdp group
+- hosts: all
+  tasks: [ ]
 - hosts: hdp
   remote_user: root
   vars:
